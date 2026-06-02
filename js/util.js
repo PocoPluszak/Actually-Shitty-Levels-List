@@ -7,89 +7,79 @@ export function round(num) {
 }
 
 /**
- * Calculates pointercrate leaderboard score points based on level position and percentage achieved
+ * Calculates pointercrate leaderboard score points
  */
 export function score(rank, percent, percentToQualify) {
     if (percent < percentToQualify || rank > 100) {
         return 0;
     }
-    if (percent === 100) {
-        return round(250 - (rank - 1) * 2.3);
-    }
-    return round((250 - (rank - 1) * 2.3) * (percent / 100));
+    const baseScore = 250 - (rank - 1) * 2.3;
+    return percent === 100 ? round(baseScore) : round(baseScore * (percent / 100));
 }
 
 /**
- * Strips formatting or wraps text strings cleanly for language localization configs
+ * Strips formatting or wraps text strings cleanly
  */
 export function localize(text) {
-    if (!text) return '';
-    return text.toString();
+    return text ? text.toString() : '';
 }
 
 /**
- * Randomly shuffles an array in place (used for the Roulette game minigame)
+ * Randomly shuffles an array in place
  */
 export function shuffle(array) {
-    let currentIndex = array.length, randomIndex;
+    let currentIndex = array.length;
     while (currentIndex != 0) {
-        randomIndex = Math.floor(Math.random() * currentIndex);
+        let randomIndex = Math.floor(Math.random() * currentIndex);
         currentIndex--;
-        [array[currentIndex], array[randomIndex]] = [
-            array[randomIndex], array[currentIndex]];
+        [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
     }
     return array;
 }
 
 /**
- * Extracts a unique YouTube video ID from various YouTube URL formats.
- * Added compatibility fallback for Medal links to prevent crashes.
+ * Extracts a unique YouTube video ID
  */
 export function getYoutubeIdFromUrl(url) {
     if (!url) return null;
-
-    if (url.includes('medal.tv')) {
-        return url;
-    }
-
-    let id = url;
-    if (url.includes('youtu.be/')) {
-        id = url.split('youtu.be/')[1].split(/[?#]/)[0];
-    } else if (url.includes('://youtube.com')) {
-        id = url.split('://youtube.com')[1].split(/[?#]/)[0];
-    } else if (url.includes('v=')) {
-        id = url.split('v=')[1].split(/[&?#]/)[0];
-    }
-    return id;
+    const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+    const match = url.match(regex);
+    return match ? match[1] : null;
 }
 
 /**
- * Multi-platform embed link cleaner. Handles traditional YouTube URLs and formats
- * raw Medal.tv clip URLs into fully compatible iframe elements.
+ * Multi-platform embed link cleaner.
+ * Returns a valid URL for an iframe src.
  */
 export function embed(url) {
     if (!url) return null;
 
-    // Fix: Clean out tracking queries safely and format Medal link parameters correctly
     if (url.includes('medal.tv')) {
-        if (url.includes('clip-embed')) {
-            return url;
-        }
-        let cleanUrlString = url.split(/[?#]/)[0];
-        let embedPath = cleanUrlString.replace('medal.tv/games/', 'medal.tv/clip-embed/games/');
-        return `${embedPath}?autoplay=0&muted=1&loop=1`;
+        // Ensure we are using the embeddable path
+        if (url.includes('clip-embed')) return url;
+        
+        const cleanUrl = url.split(/[?#]/)[0];
+        // Medal URLs typically need 'clip-embed' prefix to bypass X-Frame-Options
+        const embedUrl = cleanUrl.replace('medal.tv/', 'medal.tv/clip-embed/');
+        return `${embedUrl}?autoplay=0&muted=1&loop=1`;
     }
 
-    return getYoutubeIdFromUrl(url);
+    const youtubeId = getYoutubeIdFromUrl(url);
+    if (youtubeId) {
+        return `https://www.youtube.com/embed/${youtubeId}`;
+    }
+
+    return url;
 }
 
 /**
- * Generates a high-quality YouTube video thumbnail URL from its unique video ID string.
+ * Generates a high-quality YouTube video thumbnail URL.
  */
 export function getThumbnailFromId(id) {
     if (!id) return '';
     if (id.includes('medal.tv')) {
-        return 'https://githubusercontent.com';
+        // Medal doesn't have a simple ID-to-thumbnail API like YouTube
+        return '/assets/medal-placeholder.png'; 
     }
-    return `https://youtube.com{id}/mqdefault.jpg`;
+    return `https://img.youtube.com/vi/${id}/mqdefault.jpg`;
 }
