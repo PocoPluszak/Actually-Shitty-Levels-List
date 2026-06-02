@@ -1,38 +1,48 @@
-// https://stackoverflow.com/questions/3452546/how-do-i-get-the-youtube-video-id-from-a-url
-export function getYoutubeIdFromUrl(url) {
-    return url.match(
-        /.*(?:youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=)([^#\&\?]*).*/,
-    )?.[1] ?? '';
-}
+export default {
+    props: {
+        video: {
+            type: String,
+            required: true,
+        },
+    },
+    template: `
+        <div class="embed">
+            <iframe 
+                :src="embedUrl" 
+                frameborder="0" 
+                allowfullscreen
+                allow="autoplay; encrypted-media">
+            </iframe>
+        </div>
+    `,
+    computed: {
+        embedUrl() {
+            // Check for YouTube links
+            if (this.video.includes('youtube.com') || this.video.includes('youtu.be')) {
+                let id = '';
+                if (this.video.includes('youtu.be/')) {
+                    id = this.video.split('youtu.be/')[1].split(/[?#]/)[0];
+                } else if (this.video.includes('embed/')) {
+                    id = this.video.split('embed/')[1].split(/[?#]/)[0];
+                } else {
+                    id = this.video.split('v=')[1].split(/[&?#]/)[0];
+                }
+                return `https://youtube.com{id}`;
+            }
+            
+            // Check for Medal.tv clip links
+            if (this.video.includes('medal.tv')) {
+                // If it's already an embed link, pass it through
+                if (this.video.includes('clip-embed')) {
+                    return this.video;
+                }
+                // Cleans up a standard share link and converts it to Medal's official frame player
+                let cleanUrl = this.video.split(/[?#]/)[0];
+                return cleanUrl.replace('medal.tv/games/', 'medal.tv/clip-embed/games/');
+            }
 
-export function embed(video) {
-    return `https://www.youtube.com/embed/${getYoutubeIdFromUrl(video)}`;
-}
-
-export function localize(num) {
-    return num.toLocaleString(undefined, { minimumFractionDigits: 3 });
-}
-
-export function getThumbnailFromId(id) {
-    return `https://img.youtube.com/vi/${id}/mqdefault.jpg`;
-}
-
-// https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
-export function shuffle(array) {
-    let currentIndex = array.length, randomIndex;
-
-    // While there remain elements to shuffle.
-    while (currentIndex != 0) {
-        // Pick a remaining element.
-        randomIndex = Math.floor(Math.random() * currentIndex);
-        currentIndex--;
-
-        // And swap it with the current element.
-        [array[currentIndex], array[randomIndex]] = [
-            array[randomIndex],
-            array[currentIndex],
-        ];
-    }
-
-    return array;
-}
+            // Fallback: If it's another direct link, try loading it straight into the frame
+            return this.video;
+        },
+    },
+};
