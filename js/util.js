@@ -54,9 +54,9 @@ export function getYoutubeIdFromUrl(url) {
 
     let id = url;
     if (url.includes('youtu.be/')) {
-        id = url.split('youtu.be/').split(/[?#]/)[0];
+        id = url.split('youtu.be/')[1].split(/[?#]/)[0];
     } else if (url.includes('://youtube.com')) {
-        id = url.split('://youtube.com').split(/[?#]/)[0];
+        id = url.split('://youtube.com')[1].split(/[?#]/)[0];
     } else if (url.includes('v=')) {
         id = url.split('v=')[1].split(/[&?#]/)[0];
     }
@@ -70,6 +70,7 @@ export function getYoutubeIdFromUrl(url) {
 export function embed(url) {
     if (!url) return null;
 
+    // Fix: Keep it as a string so .replace() doesn't break the application frame
     if (url.includes('medal.tv')) {
         if (url.includes('clip-embed')) {
             return url;
