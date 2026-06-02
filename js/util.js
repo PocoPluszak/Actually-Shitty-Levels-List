@@ -39,7 +39,6 @@ export function embed(url) {
         if (url.includes('clip-embed')) {
             return url;
         }
-        // Extract the raw link text, strip parameters, and swap to embed paths
         let cleanUrl = url.split(/[?#]/)[0];
         if (cleanUrl.includes('/games/')) {
             return cleanUrl.replace('medal.tv/games/', 'medal.tv/clip-embed/games/');
@@ -57,6 +56,17 @@ export function embed(url) {
         id = url.split('v=')[1].split(/[&?#]/)[0];
     }
     
-    // Return just the unique video code string so the component creates the YouTube URL
     return id;
+}
+
+/**
+ * Generates a high-quality YouTube video thumbnail URL from its unique video ID string.
+ */
+export function getThumbnailFromId(id) {
+    if (!id) return '';
+    // If it's a Medal link, return a default thumbnail placeholder since Medal doesn't allow raw image fetches easily
+    if (id.includes('medal.tv')) {
+        return 'https://githubusercontent.com';
+    }
+    return `https://youtube.com{id}/mqdefault.jpg`;
 }
