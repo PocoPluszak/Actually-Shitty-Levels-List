@@ -55,13 +55,10 @@ export function embed(url) {
     if (!url) return null;
 
     if (url.includes('medal.tv')) {
-        // Ensure we are using the embeddable path
-        if (url.includes('clip-embed')) return url;
-        
-        const cleanUrl = url.split(/[?#]/)[0];
-        // Medal URLs typically need 'clip-embed' prefix to bypass X-Frame-Options
-        const embedUrl = cleanUrl.replace('medal.tv/', 'medal.tv/clip-embed/');
-        return `${embedUrl}?autoplay=0&muted=1&loop=1`;
+        // Extract the Clip ID to avoid SAMEORIGIN redirect issues
+        const parts = url.split('/');
+        const clipId = parts[parts.length - 1].split(/[?#]/)[0];
+        return `https://medal.tv/clip-embed/clips/${clipId}?autoplay=0&muted=1&loop=1`;
     }
 
     const youtubeId = getYoutubeIdFromUrl(url);
@@ -78,8 +75,8 @@ export function embed(url) {
 export function getThumbnailFromId(id) {
     if (!id) return '';
     if (id.includes('medal.tv')) {
-        // Medal doesn't have a simple ID-to-thumbnail API like YouTube
         return '/assets/medal-placeholder.png'; 
     }
+    // Fixed: uses ${id} instead of {id}
     return `https://img.youtube.com/vi/${id}/mqdefault.jpg`;
 }
