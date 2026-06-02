@@ -55,8 +55,8 @@ export function getYoutubeIdFromUrl(url) {
     let id = url;
     if (url.includes('youtu.be/')) {
         id = url.split('youtu.be/')[1].split(/[?#]/)[0];
-    } else if (url.includes('://youtube.com')) {
-        id = url.split('://youtube.com')[1].split(/[?#]/)[0];
+    } else if (url.includes('youtube.com/embed/')) {
+        id = url.split('youtube.com/embed/')[1].split(/[?#]/)[0];
     } else if (url.includes('v=')) {
         id = url.split('v=')[1].split(/[&?#]/)[0];
     }
@@ -70,16 +70,14 @@ export function getYoutubeIdFromUrl(url) {
 export function embed(url) {
     if (!url) return null;
 
-    // Fix: Keep it as a string so .replace() doesn't break the application frame
+    // Fix: Safely clean out parameters using clean string methods instead of arrays
     if (url.includes('medal.tv')) {
         if (url.includes('clip-embed')) {
             return url;
         }
-        let cleanUrl = url.split(/[?#]/)[0];
-        if (cleanUrl.includes('/games/')) {
-            return cleanUrl.replace('medal.tv/games/', 'medal.tv/clip-embed/games/');
-        }
-        return cleanUrl;
+        let baseString = url.split(/[?#]/)[0];
+        let embedPath = baseString.replace('medal.tv/games/', 'medal.tv/clip-embed/games/');
+        return `${embedPath}?autoplay=0&muted=1&loop=1`;
     }
 
     return getYoutubeIdFromUrl(url);
