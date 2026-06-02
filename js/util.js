@@ -28,6 +28,29 @@ export function localize(text) {
 }
 
 /**
+ * Extracts a unique YouTube video ID from various YouTube URL formats.
+ * Added compatibility fallback for Medal links to prevent crashes.
+ */
+export function getYoutubeIdFromUrl(url) {
+    if (!url) return null;
+
+    // Handle Medal links if they slip into Roulette
+    if (url.includes('medal.tv')) {
+        return url;
+    }
+
+    let id = url;
+    if (url.includes('youtu.be/')) {
+        id = url.split('youtu.be/')[1].split(/[?#]/)[0];
+    } else if (url.includes('://youtube.com')) {
+        id = url.split('://youtube.com')[1].split(/[?#]/)[0];
+    } else if (url.includes('v=')) {
+        id = url.split('v=')[1].split(/[&?#]/)[0];
+    }
+    return id;
+}
+
+/**
  * Multi-platform embed link cleaner. Handles traditional YouTube URLs and formats
  * raw Medal.tv clip URLs into fully compatible iframe elements.
  */
@@ -46,17 +69,8 @@ export function embed(url) {
         return cleanUrl;
     }
 
-    // 2. Standard YouTube fallback parsing
-    let id = url;
-    if (url.includes('youtu.be/')) {
-        id = url.split('youtu.be/')[1].split(/[?#]/)[0];
-    } else if (url.includes('://youtube.com')) {
-        id = url.split('://youtube.com')[1].split(/[?#]/)[0];
-    } else if (url.includes('v=')) {
-        id = url.split('v=')[1].split(/[&?#]/)[0];
-    }
-    
-    return id;
+    // 2. Standard YouTube parsing using our helper above
+    return getYoutubeIdFromUrl(url);
 }
 
 /**
@@ -64,7 +78,7 @@ export function embed(url) {
  */
 export function getThumbnailFromId(id) {
     if (!id) return '';
-    // If it's a Medal link, return a default thumbnail placeholder since Medal doesn't allow raw image fetches easily
+    // If it's a Medal link, return a default thumbnail placeholder
     if (id.includes('medal.tv')) {
         return 'https://githubusercontent.com';
     }
