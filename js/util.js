@@ -1,4 +1,4 @@
-export default {
+export const embed = {
     props: {
         video: {
             type: String,
