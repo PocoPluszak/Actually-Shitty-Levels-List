@@ -28,22 +28,35 @@ export function localize(text) {
 }
 
 /**
+ * Randomly shuffles an array in place (used for the Roulette game minigame)
+ */
+export function shuffle(array) {
+    let currentIndex = array.length, randomIndex;
+    while (currentIndex != 0) {
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex--;
+        [array[currentIndex], array[randomIndex]] = [
+            array[randomIndex], array[currentIndex]];
+    }
+    return array;
+}
+
+/**
  * Extracts a unique YouTube video ID from various YouTube URL formats.
  * Added compatibility fallback for Medal links to prevent crashes.
  */
 export function getYoutubeIdFromUrl(url) {
     if (!url) return null;
 
-    // Handle Medal links if they slip into Roulette
     if (url.includes('medal.tv')) {
         return url;
     }
 
     let id = url;
     if (url.includes('youtu.be/')) {
-        id = url.split('youtu.be/')[1].split(/[?#]/)[0];
+        id = url.split('youtu.be/').split(/[?#]/)[0];
     } else if (url.includes('://youtube.com')) {
-        id = url.split('://youtube.com')[1].split(/[?#]/)[0];
+        id = url.split('://youtube.com').split(/[?#]/)[0];
     } else if (url.includes('v=')) {
         id = url.split('v=')[1].split(/[&?#]/)[0];
     }
@@ -57,7 +70,6 @@ export function getYoutubeIdFromUrl(url) {
 export function embed(url) {
     if (!url) return null;
 
-    // 1. Support Medal.tv clip links
     if (url.includes('medal.tv')) {
         if (url.includes('clip-embed')) {
             return url;
@@ -69,7 +81,6 @@ export function embed(url) {
         return cleanUrl;
     }
 
-    // 2. Standard YouTube parsing using our helper above
     return getYoutubeIdFromUrl(url);
 }
 
@@ -78,7 +89,6 @@ export function embed(url) {
  */
 export function getThumbnailFromId(id) {
     if (!id) return '';
-    // If it's a Medal link, return a default thumbnail placeholder
     if (id.includes('medal.tv')) {
         return 'https://githubusercontent.com';
     }
