@@ -40,12 +40,13 @@ export default {
                 <div class="level" v-if="level">
                     <h1>{{ level.name }}</h1>
                     <LevelAuthors :author="level.author" :creators="level.creators" :verifier="level.verifier"></LevelAuthors>
-                    <iframe 
+               <iframe 
     class="video" 
     id="videoframe" 
     :src="video" 
     frameborder="0" 
-    allow="autoplay; encrypted-media; picture-in-picture" 
+    allow="autoplay; encrypted-media; picture-in-picture; clipboard-write" 
+    sandbox="allow-scripts allow-same-origin allow-popups allow-forms allow-presentation"
     allowfullscreen>
 </iframe>
 
