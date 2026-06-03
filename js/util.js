@@ -48,17 +48,10 @@ export function getYoutubeIdFromUrl(url) {
 }
 
 /**
- * Multi-platform embed link cleaner.
+ * YouTube embed link cleaner.
  */
 export function embed(url) {
     if (!url) return null;
-
-    if (url.includes('medal.tv')) {
-        const cleanUrl = url.split(/[?#]/)[0];
-        const parts = cleanUrl.split('/');
-        const clipId = parts[parts.length - 1];
-        return `https://medal.tv/clip-embed/clips/${clipId}?autoplay=0&muted=1&loop=1`;
-    }
 
     const youtubeId = getYoutubeIdFromUrl(url);
     if (youtubeId) {
@@ -73,8 +66,5 @@ export function embed(url) {
  */
 export function getThumbnailFromId(id) {
     if (!id) return '';
-    if (id.includes('medal.tv')) {
-        return '/assets/medal-placeholder.png'; 
-    }
     return `https://img.youtube.com/vi/${id}/mqdefault.jpg`;
 }
