@@ -162,7 +162,7 @@ export default {
                             <td class="mobile">
                                 <img
                                     v-if="record.mobile"
-                                    :src="'/assets/phone-landscape${store.dark ? '-dark' : ''}.svg'"
+                                   :src="'/assets/phone-landscape' + (store.dark ? '-dark' : '') + '.svg'"
                                     alt="Mobile"
                                 >
                             </td>
@@ -217,7 +217,7 @@ export default {
                             <li v-for="editor in editors">
 
                                 <img
-                                    :src="'/assets/${roleIconMap[editor.role]}${store.dark ? '-dark' : ''}.svg'"
+                                  :src="'/assets/' + roleIconMap[editor.role] + (store.dark ? '-dark' : '') + '.svg'"
                                     :alt="editor.role"
                                 >
 
@@ -351,7 +351,7 @@ export default {
                 ...this.list
                     .filter(([_, err]) => err)
                     .map(([_, err]) => {
-                        return 'Failed to load level. (${err}.json)';
+                      return 'Failed to load level. (' + err + '.json)';
                     })
             );
 
