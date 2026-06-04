@@ -3,6 +3,7 @@
  */
 export function round(num) {
     if (num === null || num === undefined) return 0;
+
     return Math.round(num * 10) / 10;
 }
 
@@ -34,7 +35,7 @@ export function localize(text) {
 export function shuffle(array) {
     let currentIndex = array.length;
 
-    while (currentIndex != 0) {
+    while (currentIndex !== 0) {
         let randomIndex = Math.floor(Math.random() * currentIndex);
 
         currentIndex--;
@@ -55,7 +56,7 @@ export function getYoutubeIdFromUrl(url) {
     if (!url) return null;
 
     const regex =
-        /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+        /(?:youtube\.com\/(?:watch\?v=|embed\/|v\/)|youtu\.be\/)([^"&?\/\s]{11})/;
 
     const match = url.match(regex);
 
@@ -68,7 +69,8 @@ export function getYoutubeIdFromUrl(url) {
 export function getTikTokIdFromUrl(url) {
     if (!url) return null;
 
-    const regex = /tiktok\.com\/.*\/video\/(\d+)/;
+    const regex =
+        /(?:https?:\/\/)?(?:www\.)?tiktok\.com\/@[^\/]+\/video\/(\d+)/;
 
     const match = url.match(regex);
 
@@ -92,14 +94,15 @@ export function embed(url) {
     const tikTokId = getTikTokIdFromUrl(url);
 
     if (tikTokId) {
-        return `https://www.tiktok.com/embed/v2/${tikTokId}`;
+        return `https://www.tiktok.com/player/v1/${tikTokId}`;
     }
 
+    // Unknown platform
     return url;
 }
 
 /**
- * Generates YouTube thumbnail only
+ * Generates YouTube thumbnail from full URL
  */
 export function getThumbnail(url) {
     if (!url) return '';
@@ -110,6 +113,16 @@ export function getThumbnail(url) {
         return `https://img.youtube.com/vi/${youtubeId}/mqdefault.jpg`;
     }
 
-    // TikTok has no easy public thumbnails
+    // TikTok has no simple public thumbnail
     return '';
+}
+
+/**
+ * Generates YouTube thumbnail directly from video ID
+ * (kept for backwards compatibility)
+ */
+export function getThumbnailFromId(id) {
+    if (!id) return '';
+
+    return `https://img.youtube.com/vi/${id}/mqdefault.jpg`;
 }
