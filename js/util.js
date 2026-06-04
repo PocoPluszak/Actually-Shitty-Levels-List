@@ -64,6 +64,15 @@ export function embed(url) {
 }
 
 /**
+ * Generates YouTube thumbnail directly from video ID
+ */
+export function getThumbnailFromId(id) {
+    if (!id) return '';
+
+    return `https://img.youtube.com/vi/${id}/mqdefault.jpg`;
+}
+
+/**
  * YouTube thumbnail only
  */
 export function getThumbnail(url) {
