@@ -47,7 +47,7 @@ export default {
                         >
                             <button @click="selected = i">
                                 <span class="type-label-lg">
-                                    {{ level?.name || \`Error (\${err}.json)\` }}
+                                    {{ level?.name || `Error (${err}.json)` }}
                                 </span>
                             </button>
                         </td>
@@ -89,7 +89,7 @@ export default {
                         <section></section>
                     </blockquote>
 
-                    <!-- Fallback -->
+                    <!-- Unsupported -->
                     <p v-else>
                         Unsupported video platform.
                     </p>
@@ -162,7 +162,7 @@ export default {
                             <td class="mobile">
                                 <img
                                     v-if="record.mobile"
-                                    :src="\`/assets/phone-landscape\${store.dark ? '-dark' : ''}.svg\`"
+                                    :src="`/assets/phone-landscape${store.dark ? '-dark' : ''}.svg`"
                                     alt="Mobile"
                                 >
                             </td>
@@ -217,7 +217,7 @@ export default {
                             <li v-for="editor in editors">
 
                                 <img
-                                    :src="\`/assets/\${roleIconMap[editor.role]}\${store.dark ? '-dark' : ''}.svg\`"
+                                    :src="`/assets/${roleIconMap[editor.role]}${store.dark ? '-dark' : ''}.svg`"
                                     :alt="editor.role"
                                 >
 
@@ -289,6 +289,7 @@ export default {
 
     data: () => ({
         list: [],
+    toggledShowcase: false,
         editors: [],
         loading: true,
         selected: 0,
@@ -327,7 +328,7 @@ export default {
 
     async mounted() {
 
-        // Load TikTok embed script
+        // Load TikTok embed script once
         if (!document.getElementById("tiktok-embed-script")) {
             const script = document.createElement("script");
 
@@ -338,11 +339,9 @@ export default {
             document.body.appendChild(script);
         }
 
-        // Hide loading spinner
         this.list = await fetchList();
         this.editors = await fetchEditors();
 
-        // Error handling
         if (!this.list) {
             this.errors = [
                 "Failed to load list. Retry in a few minutes or notify list staff.",
@@ -352,7 +351,7 @@ export default {
                 ...this.list
                     .filter(([_, err]) => err)
                     .map(([_, err]) => {
-                        return \`Failed to load level. (\${err}.json)\`;
+                        return `Failed to load level. (${err}.json)`;
                     })
             );
 
