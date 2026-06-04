@@ -2,7 +2,6 @@ import { store } from "../main.js";
 import {
     embed,
     getPlatform,
-    getTikTokIdFromUrl
 } from "../util.js";
 
 import { score } from "../score.js";
