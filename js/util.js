@@ -13,8 +13,12 @@ export function score(rank, percent, percentToQualify) {
     if (percent < percentToQualify || rank > 100) {
         return 0;
     }
+
     const baseScore = 250 - (rank - 1) * 2.3;
-    return percent === 100 ? round(baseScore) : round(baseScore * (percent / 100));
+
+    return percent === 100
+        ? round(baseScore)
+        : round(baseScore * (percent / 100));
 }
 
 /**
@@ -29,42 +33,83 @@ export function localize(text) {
  */
 export function shuffle(array) {
     let currentIndex = array.length;
+
     while (currentIndex != 0) {
         let randomIndex = Math.floor(Math.random() * currentIndex);
+
         currentIndex--;
-        [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+
+        [array[currentIndex], array[randomIndex]] = [
+            array[randomIndex],
+            array[currentIndex]
+        ];
     }
+
     return array;
 }
 
 /**
- * Extracts a unique YouTube video ID
+ * Extracts YouTube video ID
  */
 export function getYoutubeIdFromUrl(url) {
     if (!url) return null;
-    const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+
+    const regex =
+        /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+
     const match = url.match(regex);
+
     return match ? match[1] : null;
 }
 
 /**
- * YouTube embed link cleaner.
+ * Extracts TikTok video ID
+ */
+export function getTikTokIdFromUrl(url) {
+    if (!url) return null;
+
+    const regex = /tiktok\.com\/.*\/video\/(\d+)/;
+
+    const match = url.match(regex);
+
+    return match ? match[1] : null;
+}
+
+/**
+ * Converts URLs into embeddable links
  */
 export function embed(url) {
     if (!url) return null;
 
+    // YouTube
     const youtubeId = getYoutubeIdFromUrl(url);
+
     if (youtubeId) {
         return `https://www.youtube.com/embed/${youtubeId}`;
+    }
+
+    // TikTok
+    const tikTokId = getTikTokIdFromUrl(url);
+
+    if (tikTokId) {
+        return `https://www.tiktok.com/embed/v2/${tikTokId}`;
     }
 
     return url;
 }
 
 /**
- * Generates a high-quality YouTube video thumbnail URL.
+ * Generates YouTube thumbnail only
  */
-export function getThumbnailFromId(id) {
-    if (!id) return '';
-    return `https://img.youtube.com/vi/${id}/mqdefault.jpg`;
+export function getThumbnail(url) {
+    if (!url) return '';
+
+    const youtubeId = getYoutubeIdFromUrl(url);
+
+    if (youtubeId) {
+        return `https://img.youtube.com/vi/${youtubeId}/mqdefault.jpg`;
+    }
+
+    // TikTok has no easy public thumbnails
+    return '';
 }
