@@ -20,50 +20,26 @@ export function getYoutubeIdFromUrl(url) {
 }
 
 /**
- * Extracts TikTok video ID
- */
-export function getTikTokIdFromUrl(url) {
-    if (!url) return null;
-
-    const regex = /video\/(\d+)/;
-
-    const match = url.match(regex);
-
-    return match ? match[1] : null;
-}
-
-/**
- * Detects platform
+ * Detects platform (YouTube only now)
  */
 export function getPlatform(url) {
     if (!url) return 'unknown';
 
-    if (getYoutubeIdFromUrl(url)) {
-        return 'youtube';
-    }
-
-    if (getTikTokIdFromUrl(url)) {
-        return 'tiktok';
-    }
-
-    return 'unknown';
+    return getYoutubeIdFromUrl(url) ? 'youtube' : 'unknown';
 }
 
 /**
- * Randomly shuffles an array in place
+ * Random shuffle
  */
 export function shuffle(array) {
     let currentIndex = array.length;
 
     while (currentIndex !== 0) {
         let randomIndex = Math.floor(Math.random() * currentIndex);
-
         currentIndex--;
 
-        [array[currentIndex], array[randomIndex]] = [
-            array[randomIndex],
-            array[currentIndex]
-        ];
+        [array[currentIndex], array[randomIndex]] =
+            [array[randomIndex], array[currentIndex]];
     }
 
     return array;
@@ -73,33 +49,21 @@ export function shuffle(array) {
  * YouTube embed link
  */
 export function embed(url) {
-    const youtubeId = getYoutubeIdFromUrl(url);
-
-    if (youtubeId) {
-        return `https://www.youtube.com/embed/${youtubeId}`;
-    }
-
-    return url;
+    const id = getYoutubeIdFromUrl(url);
+    return id ? `https://www.youtube.com/embed/${id}` : url;
 }
 
 /**
- * Generates YouTube thumbnail directly from video ID
- */
-export function getThumbnailFromId(id) {
-    if (!id) return '';
-
-    return `https://img.youtube.com/vi/${id}/mqdefault.jpg`;
-}
-
-/**
- * YouTube thumbnail only
+ * YouTube thumbnail
  */
 export function getThumbnail(url) {
-    const youtubeId = getYoutubeIdFromUrl(url);
+    const id = getYoutubeIdFromUrl(url);
+    return id ? `https://img.youtube.com/vi/${id}/mqdefault.jpg` : '';
+}
 
-    if (youtubeId) {
-        return `https://img.youtube.com/vi/${youtubeId}/mqdefault.jpg`;
-    }
-
-    return '';
+/**
+ * Thumbnail from ID
+ */
+export function getThumbnailFromId(id) {
+    return id ? `https://img.youtube.com/vi/${id}/mqdefault.jpg` : '';
 }
