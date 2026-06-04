@@ -78,17 +78,6 @@ export default {
                     >
                     </iframe>
 
-                    <!-- TikTok -->
-                    <blockquote
-                        v-else-if="platform === 'tiktok'"
-                        class="tiktok-embed"
-                        :cite="currentVideoUrl"
-                        :data-video-id="tiktokId"
-                        style="max-width: 605px; min-width: 325px;"
-                    >
-                        <section></section>
-                    </blockquote>
-
                     <!-- Unsupported -->
                     <p v-else>
                         Unsupported video platform.
