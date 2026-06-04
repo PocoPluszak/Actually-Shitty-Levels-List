@@ -25,8 +25,7 @@ export function getYoutubeIdFromUrl(url) {
 export function getTikTokIdFromUrl(url) {
     if (!url) return null;
 
-    const regex =
-        /(?:https?:\/\/)?(?:www\.)?tiktok\.com\/@[^\/]+\/video\/(\d+)/;
+    const regex = /video\/(\d+)/;
 
     const match = url.match(regex);
 
