@@ -1,4 +1,11 @@
 /**
+ * Strips formatting or wraps text strings cleanly
+ */
+export function localize(text) {
+    return text ? text.toString() : '';
+}
+
+/**
  * Extracts YouTube video ID
  */
 export function getYoutubeIdFromUrl(url) {
