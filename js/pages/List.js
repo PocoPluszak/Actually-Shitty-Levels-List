@@ -355,6 +355,5 @@ export default {
         embed,
         score,
         getPlatform,
-        getTikTokIdFromUrl
     },
 };
